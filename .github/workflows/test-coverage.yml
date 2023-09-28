@@ -1,0 +1,46 @@
+name: Test Coverage
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.x
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+    - name: Install dependencies
+      run: |
+        pip install coverage pytest
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
+        if [ -f dev-requirements.txt ]; then pip install -r dev-requirements.txt; fi
+        if [ -f setup.py ]; then pip install -e .; fi
+    - name: Run tests with coverage
+      run: |
+        coverage run -m pytest
+    - name: Determine coverage status
+      run: |
+        coverage_output=$(coverage report --show-missing)
+        echo "Coverage Output: $coverage_output"
+        coverage_percent=$(coverage report --show-missing | grep 'TOTAL' | awk '{print $NF}' | sed 's/%//')
+        echo "Extracted Coverage: $coverage_percent%"
+        if (( coverage_percent >= 70 )); then
+          echo "COVERAGE_CHECK=success" >> $GITHUB_ENV
+        else
+          echo "COVERAGE_CHECK=failure" >> $GITHUB_ENV
+        fi
+    - name: Generate HTML coverage report
+      run: |
+        coverage html
+    - name: Upload coverage report artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-report
+        path: htmlcov/
+    - name: Coverage Met
+      if: env.COVERAGE_CHECK == 'failure'
+      run: exit 1

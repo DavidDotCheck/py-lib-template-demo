@@ -1,0 +1,47 @@
+{
+  "name": "license",
+  "path": "LICENSE",
+  "default-action": "replace",
+
+  "user-prompt": {
+    "message": "Choose a license",
+    "type": "select"
+  },
+
+  "options": {
+    "MIT": {
+      "content": "licenses/mit.txt",
+      "type": "file"
+    },
+
+    "Apache 2.0": {
+      "content": "licenses/apache.txt",
+      "type": "file"
+    },
+
+    "BSD 3-Clause": {
+      "content": "licenses/bsd-3-clause.txt",
+      "type": "file"
+    },
+
+    "BSD 2-Clause": {
+      "content": "licenses/bsd-2-clause.txt",
+      "type": "file"
+    },
+
+    "GPLv3": {
+      "content": "licenses/gplv3.txt",
+      "type": "file"
+    },
+
+    "GPLv2": {
+      "content": "licenses/gplv2.txt",
+      "type": "file"
+    },
+
+    "unlicense": {
+      "content": "licenses/unlicense.txt",
+      "type": "file"
+    }
+  }
+}

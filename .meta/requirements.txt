@@ -1,0 +1,2 @@
+pydantic 
+prompt_toolkit
