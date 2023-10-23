@@ -3,7 +3,7 @@ name: Test Coverage
 on: [push]
 
 jobs:
-  build:
+  test-coverage:
     runs-on: ubuntu-latest
 
     steps:
