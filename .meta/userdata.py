@@ -162,7 +162,7 @@ class GitHubDeviceAuth:
             return None
 
 
-class UserData:
+class Github:
     def __init__(self, client_id):
         self.client_id = client_id
         self.device_code = None
@@ -246,12 +246,12 @@ class UserData:
         return choice
 
     def set_repo_settings(self):
-        # add branch protections for ma[is]*[nr]:
+        # add branch protections for master
         # - require pull request reviews before merging
         # - require code reviews: 1
         # - require status checks to pass before merging: tests-passed
         # - require branches to be up to date before merging
-        # - allow force pushes (admin and org by default)
+        # - allow force pushes (owner only)
 
         headers = self.github.headers
         data = {
@@ -293,5 +293,5 @@ class UserData:
 if __name__ == "__main__":
     CLIENT_ID = "Iv1.eca40d81954907d2"
 
-    app = UserData(CLIENT_ID)
+    app = Github(CLIENT_ID)
     app.get_data()

@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 from pydantic import BaseModel, Field, root_validator, validator
 from enum import Enum
 
-from userdata import UserData, PlaceholderData
+from userdata import Github, PlaceholderData
 from templating import Placeholders, FileGenerator
 from ui import ui
 
@@ -30,7 +30,9 @@ class App:
         generator.write()
         choices = generator.get_choices()
         client_id = os.getenv("CLIENT_ID")
-        template_data = UserData(client_id).get_data()
+        gh = Github(client_id)
+        template_data = gh.get_data()
+        gh.set_repo_settings()
         if not template_data:
             ui.prompt(ERROR_MESSAGE)
             exit(1)
