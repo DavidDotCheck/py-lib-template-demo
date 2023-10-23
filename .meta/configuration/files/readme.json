@@ -11,11 +11,11 @@
   "options": {
     "base": {
       "content": [
-        "# {{project_name}}",
+        "# {{project.package_name}}",
         "",
         "[![License: {{license.short_name}}](https://img.shields.io/badge/license-{{license.short_name}}-blue.svg)]({{license.url}})",
-        "[![PyPI version](https://badge.fury.io/py/{{project_name}}.svg)](https://badge.fury.io/py/{{project_name}})",
-        "[![PyPI Supported Versions](https://img.shields.io/pypi/pyversions/{{project_name}}.svg)](https://pypi.python.org/pypi/{{project_name}})",
+        "[![PyPI version](https://badge.fury.io/py/{{project.package_name}}.svg)](https://badge.fury.io/py/{{project.package_name}})",
+        "[![PyPI Supported Versions](https://img.shields.io/pypi/pyversions/{{project.package_name}}.svg)](https://pypi.python.org/pypi/{{project.package_name}})",
         "[![Tests]({{github.repo_url}}/actions/workflows/test-matrix.yml/badge.svg)]({{github.repo_url}}/actions/workflows/test-matrix.yml)",
         "[![Coverage]({{github.repo_url}}/actions/workflows/test-coverage.yml/badge.svg)]({{github.repo_url}}/actions/workflows/test-coverage.ymy)"
       ],

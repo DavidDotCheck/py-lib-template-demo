@@ -1,4 +1,4 @@
-Copyright (C) {{year}} {{author.name}}
+Copyright (C) {{year}} {{user.name}}
 
   GNU GENERAL PUBLIC LICENSE
 		       Version 2, June 1991

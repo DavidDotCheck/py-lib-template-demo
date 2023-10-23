@@ -23,7 +23,7 @@ def test(c):
 
 @task
 def docs(c):
-    c.run("sphinx-apidoc -f -o docs {project_name}")
+    c.run("sphinx-apidoc -f -o docs {{project.package_name}}")
     c.run("sphinx-build -b html docs docs/_build")
 
 
@@ -35,8 +35,8 @@ def clean(c):
         "docs/_build",
         "docs/source",
         "docs/modules.rst",
-        "docs/{project_name}.rst",
-        "{project_name}.egg-info",
+        "docs/{{project.package_name}}.rst",
+        "{{project.package_name}}.egg-info",
     ]
 
     for path in paths:

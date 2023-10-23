@@ -3,14 +3,12 @@ import json
 import os
 import pathlib
 from typing import Any, Dict, List, Literal, Optional, Union
+from dotenv import load_dotenv
 from pydantic import BaseModel, Field, root_validator, validator
 from enum import Enum
-from prompt_toolkit.shortcuts import (
-    radiolist_dialog,
-    input_dialog,
-    checkboxlist_dialog,
-    message_dialog,
-)
+
+from utils import ui
+from userdata import UserData
 
 
 # Enum for action type: replace, insert, append, prepend
@@ -210,12 +208,12 @@ class FileGenerator:
         )
 
         if template.user_prompt.type == UserPromptType.SELECT:
-            selected_option = self.single_select(
+            selected_option = ui.single_select(
                 template.user_prompt.message, selectable_options
             )
             options[selected_option].include = True
         elif template.user_prompt.type == UserPromptType.MULTISELECT:
-            selected_options = self.multi_select(
+            selected_options = ui.multi_select(
                 template.user_prompt.message, selectable_options
             )
 
@@ -242,7 +240,7 @@ class FileGenerator:
 
     def generate_option(self, file: File, option: Option):
         if option.type == OptionType.FILE:
-            with open(option.content) as f:
+            with open(option.content, "r", encoding="utf-8") as f:
                 file.content += f.read()
         elif option.type == OptionType.TEXT:
             file.content += option.content
@@ -270,33 +268,17 @@ class FileGenerator:
     def get_file(self, file_name: str) -> File:
         return next(file for file in self.files if file.name == file_name)
 
-    def multi_select(self, message: str, options: List[str]):
-        # Open a prompt where the user can select multiple options using prompts_toolkit:
-
-        formatted_options = [(option, option) for option in options]
-        # Open prompt
-        selected_values = checkboxlist_dialog(
-            title="Select options",
-            text=message,
-            values=formatted_options,
-        ).run()
-
-        return selected_values
-
-    def single_select(self, message: str, options: List[str]):
-        # Open a prompt where the user can select multiple options using prompts_toolkit:
-
-        formatted_options = [(option, option) for option in options]
-        # Open prompt
-        selected_value = radiolist_dialog(
-            title="Select option",
-            text=message,
-            values=formatted_options,
-        ).run()
-
-        return selected_value
-
 
 if __name__ == "__main__":
+    load_dotenv()
     generator = FileGenerator("target", ".meta/configuration/files")
     generator.run()
+    client_id = os.getenv("CLIENT_ID")
+    template_data = UserData(client_id).get_data()
+    if not template_data:
+        print("Something is wrong with your github setup.")
+        print("Please check that you have:")
+        print("- Installed the app to your account")
+        print("- Added the the repo you want to use to the app")
+        exit(1)
+    print(template_data)

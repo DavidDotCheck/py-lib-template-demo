@@ -1,9 +1,9 @@
 # tests/test_example_module/test_example.py
-# Author: author_name <author_email>
+# Author: {{user.name}} <{{user.email}}>
 
 import sys
 import pytest
-from {project_name}.example_module import Example
+from {{project.package_name}}.example_module import Example
 
 def capture_print( function, *args):
     from io import StringIO

@@ -1,5 +1,5 @@
-# {project_name}/example_module/example.py
-# Author: author_name <author_email>
+# {{project.package_name}}/example_module/example.py
+# Author: {{user.name}} <{{user.email}}>
 
 class Example:
     """This is an example class.
