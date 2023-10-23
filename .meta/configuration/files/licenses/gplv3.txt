@@ -1,4 +1,4 @@
-Copyright (C) {{year}} {{user.name}}
+Copyright (C) {{date.year}} {{project.author}}
 
       GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007

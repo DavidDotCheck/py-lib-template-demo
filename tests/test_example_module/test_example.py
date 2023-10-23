@@ -1,5 +1,5 @@
 # tests/test_example_module/test_example.py
-# Author: {{user.name}} <{{user.email}}>
+# Author: {{project.author}} <{{project.email}}>
 
 import sys
 import pytest
@@ -22,7 +22,7 @@ def test_example():
 def test_example_name():
     example = Example("Test")
     assert example.name == "Test"
-    
+
     
 if __name__ == "__main__":
     pytest.main()

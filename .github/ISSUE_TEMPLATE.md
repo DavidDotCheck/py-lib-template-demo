@@ -1,4 +1,4 @@
-* WrapKit version:
+* {{repo.name}} version:
 * Python version:
 * Operating System:
 

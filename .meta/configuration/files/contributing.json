@@ -11,9 +11,9 @@
   "options": {
     "base": {
       "content": [
-        "# Contributing to {{github.name}}",
+        "# Contributing to cookiecutter-pylibrary-invoke",
         "",
-        "Thank you for your interest in contributing to {{github.name}}! We welcome contributions from everyone. Below are guidelines on how to contribute."
+        "Thank you for your interest in contributing to cookiecutter-pylibrary-invoke! We welcome contributions from everyone. Below are guidelines on how to contribute."
       ],
       "mandatory": true,
       "type": "array/multiline"

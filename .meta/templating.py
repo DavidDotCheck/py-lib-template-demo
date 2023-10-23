@@ -2,13 +2,14 @@ from dataclasses import dataclass
 import json
 import os
 import pathlib
+import re
 from typing import Any, Dict, List, Literal, Optional, Union
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field, root_validator, validator
 from enum import Enum
 
-from utils import ui
-from userdata import UserData
+from ui import ui
+from userdata import UserData, PlaceholderData
 
 
 # Enum for action type: replace, insert, append, prepend
@@ -44,6 +45,7 @@ class Option(BaseModel):
     position: Optional[int]
     action: Optional[ActionType]
     include: Optional[bool] = False
+    meta: Optional[Dict[str, Any]] = None
 
     @validator("position", always=True)
     def check_position(cls, position, values):
@@ -61,7 +63,7 @@ class Template(BaseModel):
     user_prompt: UserPrompt = Field(..., alias="user-prompt")
     options: Dict[str, Option]
 
-    @root_validator(pre=False)
+    @root_validator()
     def check_options_and_user_prompt(cls, values):
         user_prompt = values.get("user_prompt")
         user_prompt_type = user_prompt.type if user_prompt else None
@@ -168,11 +170,10 @@ class FileGenerator:
         self.target_dir = target_dir
         self.template_dir = template_dir
         self.files: List[File] = []
+        self.choices: Dict[str, str] = {}
 
-    def run(self):
-        print("Running file generator...")
+    def generate(self):
         templates = self.load_templates()
-        print(templates)
         self.index_templates(templates)
         self.generate_files()
 
@@ -212,6 +213,8 @@ class FileGenerator:
                 template.user_prompt.message, selectable_options
             )
             options[selected_option].include = True
+            # {file: choice}
+            self.choices[file.name] = options[selected_option]
         elif template.user_prompt.type == UserPromptType.MULTISELECT:
             selected_options = ui.multi_select(
                 template.user_prompt.message, selectable_options
@@ -220,18 +223,20 @@ class FileGenerator:
             for key in options:
                 option = options[key]
                 if key in selected_options or option.mandatory:
+                    # {file:{key: choice}}}
+                    self.choices[file.name] = {key: option for key in selected_options}
                     option.include = True
 
-        options = list(filter(lambda x: x.include, options.values()))
-        for i in range(len(options)):
-            option = options[i]
+        options_list = list(filter(lambda x: x.include, options.values()))
+        for i in range(len(options_list)):
+            option = options_list[i]
             if option.action == ActionType.INSERT:
                 # move option to position
-                options.insert(option.position, options.pop(i))
+                options_list.insert(option.position, options_list.pop(i))
 
         print(f"Generating file {file.name}...")
 
-        for option in options:
+        for option in options_list:
             self.generate_option(file, option)
             file.content += "\n"
 
@@ -249,7 +254,7 @@ class FileGenerator:
         elif option.type == OptionType.ARRAY_CONDITONAL:
             for item in option.content:
                 if isinstance(item, str):
-                    file.content += item
+                    file.content += item + "\n"
                 else:
                     condition = item.get("if")
                     text = item.get("text") + "\n"
@@ -268,17 +273,105 @@ class FileGenerator:
     def get_file(self, file_name: str) -> File:
         return next(file for file in self.files if file.name == file_name)
 
+    def get_files(self, *file_names: str) -> List[File]:
+        return (
+            [self.get_file(file_name) for file_name in file_names]
+            if file_names
+            else self.files
+        )
 
-if __name__ == "__main__":
-    load_dotenv()
-    generator = FileGenerator("target", ".meta/configuration/files")
-    generator.run()
-    client_id = os.getenv("CLIENT_ID")
-    template_data = UserData(client_id).get_data()
-    if not template_data:
-        print("Something is wrong with your github setup.")
-        print("Please check that you have:")
-        print("- Installed the app to your account")
-        print("- Added the the repo you want to use to the app")
-        exit(1)
-    print(template_data)
+    def write(self):
+        for file in self.files:
+            self.write_file(file)
+
+    def write_file(self, file: File):
+        path = file.path
+        dir = os.path.dirname(path)
+        os.makedirs(dir, exist_ok=True)
+        # write file, overwrite if exists, utf-8 encoding
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(file.content)
+
+    def get_choices(self):
+        return self.choices
+
+
+class Placeholders:
+    def __init__(self, data: PlaceholderData, choices: Optional[dict] = None):
+        self.data = data
+        if choices:
+            self.data.choices = choices
+
+    def _extract_placeholders(self, text: str):
+        regex = r"(?<!\$)\{\{([a-zA-Z0-9_]+)(.[a-zA-Z0-9_]+)*\}\}"
+        matches = re.finditer(regex, text, re.MULTILINE)
+        placeholders = []
+        for match in matches:
+            placeholders.append(match.group())
+        return placeholders
+
+    def _get_placeholder_value(self, placeholders: str):
+        # get value from self.data
+        # for example: project, project.package_name, user.name, user.email
+        data = self.data.dict()
+        keys = placeholders.strip("{{").strip("}}").split(".")
+        for key in keys:
+            if key in data:
+                data = data[key]
+            else:
+                return None
+        return data
+
+    def _replace_placeholders(self, text: str):
+        placeholders = self._extract_placeholders(text)
+        for placeholder in placeholders:
+            value = self._get_placeholder_value(placeholder)
+            # check if not string and __str__ method exists
+            if not hasattr(value, "__str__"):
+                raise ValueError(
+                    f"Placeholder {placeholder} has no string representation."
+                )
+            else:
+                value = str(value)
+            if value is not None:
+                text = text.replace(placeholder, value)
+            else:
+                raise ValueError(f"No value found for placeholder string {placeholder}")
+        return text
+
+    def check_path(self, path: pathlib.Path):
+        INCLUDE_PATHS = os.environ.get("INCLUDE_PATHS").split(",")
+        relative_path = path.relative_to(pathlib.Path(__file__).parent.parent)
+        if str(relative_path) in INCLUDE_PATHS:
+            return True
+        for part in path.parts:
+            if part.startswith(".") or part.startswith("_"):
+                return False
+        return True
+
+    def replace(self):
+        # use pathlib glob to go through all files, directories and subdirectories in the parent directory
+        parent_dir = pathlib.Path(__file__).parent.parent
+        paths = parent_dir.glob("**/*")
+        paths = list(paths)
+        include_paths = os.environ.get("INCLUDE_PATHS").split(",")
+        include_paths = map(lambda x: parent_dir / x, include_paths)
+        paths.extend(include_paths)
+        for path in paths:
+            if path.is_dir() or path.is_file():
+                if not self.check_path(path):
+                    continue
+
+                if path.is_dir():
+                    new_dir = self._replace_placeholders(path.name)
+                    path.rename(path.parent / new_dir)
+
+                elif path.is_file():
+                    new_name = self._replace_placeholders(path.name)
+                    path = path.rename(path.parent / new_name)
+
+                    with open(path, "r", encoding="utf-8") as f:
+                        text = f.read()
+                    text = self._replace_placeholders(text)
+                    with open(path, "w", encoding="utf-8") as f:
+                        f.write(text)

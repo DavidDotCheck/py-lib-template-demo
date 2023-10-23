@@ -13,11 +13,11 @@
       "content": [
         "# {{project.package_name}}",
         "",
-        "[![License: {{license.short_name}}](https://img.shields.io/badge/license-{{license.short_name}}-blue.svg)]({{license.url}})",
-        "[![PyPI version](https://badge.fury.io/py/{{project.package_name}}.svg)](https://badge.fury.io/py/{{project.package_name}})",
-        "[![PyPI Supported Versions](https://img.shields.io/pypi/pyversions/{{project.package_name}}.svg)](https://pypi.python.org/pypi/{{project.package_name}})",
-        "[![Tests]({{github.repo_url}}/actions/workflows/test-matrix.yml/badge.svg)]({{github.repo_url}}/actions/workflows/test-matrix.yml)",
-        "[![Coverage]({{github.repo_url}}/actions/workflows/test-coverage.yml/badge.svg)]({{github.repo_url}}/actions/workflows/test-coverage.ymy)"
+        "[![License: {{choices.license.meta.name}}](https://img.shields.io/badge/license-{{choices.license.meta.short_name}}-blue.svg)]({{choices.license.meta.url}})",
+        "[![PyPI version](https://badge.fury.io/py/{{project.distribution_name}}.svg)](https://badge.fury.io/py/{{project.distribution_name}})",
+        "[![PyPI Supported Versions](https://img.shields.io/pypi/pyversions/{{project.distribution_name}}.svg)](https://pypi.org/project/{{project.distribution_name}})",
+        "[![Tests]({{repo.url}}/actions/workflows/test-matrix.yml/badge.svg)]({{repo.url}}/actions/workflows/test-matrix.yml)",
+        "[![Coverage]({{repo.url}}/actions/workflows/test-coverage.yml/badge.svg)]({{repo.url}}/actions/workflows/test-coverage.ymy)"
       ],
       "mandatory": true,
       "type": "array/multiline"
@@ -54,14 +54,14 @@
         "### Install from PyPI",
         "",
         "```bash",
-        "pip install {{pypi.name}}",
+        "pip install {{project.distribution_name}}",
         "```",
         "",
         "### Install from source",
         "",
         "```bash",
-        "git clone {{github.url}}",
-        "cd {{github.name}}",
+        "git clone {{repo.url}}",
+        "cd {{repo.name}}",
         "pip install .",
         "```"
       ],
@@ -77,7 +77,7 @@
         "### Run the application",
         "",
         "```bash",
-        "python {{github.name}}",
+        "python {{repo.name}}",
         "```"
       ],
       "mandatory": false,
@@ -105,14 +105,14 @@
         "### Command line arguments",
         "",
         "```bash",
-        "python {{github.name}} --help",
+        "python {{repo.name}} --help",
         "```",
         "",
         "### Environment variables",
         "",
         "```bash",
-        "export {{github.name | upper}}_ENV_VAR_1=value",
-        "export {{github.name | upper}}_ENV_VAR_2=value",
+        "export {{repo.name}}_ENV_VAR_1=value",
+        "export {{repo.name}}_ENV_VAR_2=value",
         "```"
       ],
       "mandatory": false,
@@ -165,7 +165,7 @@
         "---",
         "## License",
         "",
-        "This project is licensed under the terms of the [{{license.name}}](LICENSE)."
+        "This project is licensed under the terms of the [{{choices.license.meta.name}}](LICENSE)."
       ],
       "mandatory": true,
       "type": "array/multiline"
@@ -188,7 +188,7 @@
         "---",
         "## Troubleshooting",
         "",
-        "If you encounter any bugs, please [file an issue]({{github.url}}/issues) along with a detailed description."
+        "If you encounter any bugs, please [file an issue]({{repo.url}}/issues) along with a detailed description."
       ],
       "mandatory": false,
       "type": "array/multiline"
@@ -234,43 +234,43 @@
         "---",
         "## Table of Contents",
         "",
-        { "if": "readme::overview", "text": "-[overview](#overview)" },
+        { "if": "readme::overview", "text": "- [overview](#overview)" },
         {
           "if": "readme::prerequisites",
-          "text": "-[prerequisites](#prerequisites)"
+          "text": "- [prerequisites](#prerequisites)"
         },
         {
           "if": "readme::installation",
-          "text": "-[installation](#installation)"
+          "text": "- [installation](#installation)"
         },
-        { "if": "readme::quickstart", "text": "-[quickstart](#quickstart)" },
-        { "if": "readme::features", "text": "-[features](#features)" },
-        { "if": "readme::usage", "text": "-[usage](#usage)" },
+        { "if": "readme::quickstart", "text": "- [quickstart](#quickstart)" },
+        { "if": "readme::features", "text": "- [features](#features)" },
+        { "if": "readme::usage", "text": "- [usage](#usage)" },
         {
           "if": "readme::running-tests",
-          "text": "-[running tests](#running-tests)"
+          "text": "- [running tests](#running-tests)"
         },
         {
           "if": "readme::build-documentation",
-          "text": "-[build documentation](#build-documentation)"
+          "text": "- [build documentation](#build-documentation)"
         },
         {
           "if": "readme::contributing",
-          "text": "-[contributing](#contributing)"
+          "text": "- [contributing](#contributing)"
         },
-        { "if": "readme::license", "text": "-[license](#license)" },
+        { "if": "readme::license", "text": "- [license](#license)" },
         {
           "if": "readme::troubleshooting",
-          "text": "-[troubleshooting](#troubleshooting)"
+          "text": "- [troubleshooting](#troubleshooting)"
         },
         {
           "if": "readme::api-reference",
-          "text": "-[api reference](#api-reference)"
+          "text": "- [api reference](#api-reference)"
         },
-        { "if": "readme::credits", "text": "-[credits](#credits)" },
+        { "if": "readme::credits", "text": "- [credits](#credits)" },
         {
           "if": "readme::version-history",
-          "text": "-[version history](#version-history)"
+          "text": "- [version history](#version-history)"
         }
       ],
       "mandatory": true,

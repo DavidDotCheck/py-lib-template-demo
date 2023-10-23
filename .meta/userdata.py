@@ -1,9 +1,10 @@
 import requests
 import time
+import pyperclip
 
 from pydantic import BaseModel
 from typing import Optional
-from utils import ui
+from ui import ui
 
 
 class LimitedGitHubUser(BaseModel):
@@ -13,8 +14,8 @@ class LimitedGitHubUser(BaseModel):
     repos_url: str
 
     type: str
-    name: Optional[str]
-    email: Optional[str]
+    name: Optional[str] = None
+    email: Optional[str] = None
     public_repos: int = 0
     private_repos: int = 0
 
@@ -42,16 +43,25 @@ class LimitedGitHubRepo(BaseModel):
 class Project(BaseModel):
     package_name: str
     distribution_name: str
+    author: str
+    email: str
 
     class Config:
         extra = "ignore"
 
 
-class Data(BaseModel):
+class PlaceholderData(BaseModel):
     user: LimitedGitHubUser
     repo: LimitedGitHubRepo
     project: Project
-    year: int = time.localtime().tm_year
+    choices: Optional[dict]
+    
+    date = {
+        "formatted": time.strftime("%Y-%m-%d"),
+        "year": time.localtime().tm_year,
+        "month": time.localtime().tm_mon,
+        "day": time.localtime().tm_mday,
+    }
 
     class Config:
         extra = "ignore"
@@ -70,7 +80,6 @@ class GitHubDeviceAuth:
             headers={"Accept": "application/json"},
         )
         device_code_info = response.json()
-        print(device_code_info)
         self.device_code = device_code_info["device_code"]
         return device_code_info["verification_uri"], device_code_info["user_code"]
 
@@ -144,7 +153,6 @@ class GitHubDeviceAuth:
 
         if response.status_code == 200:
             emails = response.json()
-            print(emails)
             return [
                 email["email"]
                 for email in emails
@@ -163,7 +171,10 @@ class UserData:
 
     def authorize(self):
         verification_uri, user_code = self.github.request_device_code()
-        print(f"Go to {verification_uri} and enter the user code: {user_code}")
+        ui.prompt(f"Please got to: {verification_uri} \nand enter the code: {user_code}", "Copy Code")
+        # copy the code to the user's clipboard
+        pyperclip.copy(user_code)
+        
         self.github.wait_for_authorization()
 
     def load_user_info(self):
@@ -188,7 +199,9 @@ class UserData:
     def choose_repo(self):
         add_repositories_url = "https://github.com/settings/installations"
         options = [repo.full_name for repo in self.write_repos] + ["Not listed"]
-        selected_name = ui.single_select("Choose a repo to install the app to", options)
+        selected_name = ui.single_select(
+            "Choose a repo to configure the template for", options
+        )
         selected_repo = [
             repo for repo in self.write_repos if repo.full_name == selected_name
         ]
@@ -209,6 +222,13 @@ class UserData:
         choice = ui.single_select("Choose an email to credit the app with", options)
         if choice == "Not listed":
             return ui.input("Enter a custom email")
+        return choice
+
+    def choose_author(self):
+        options = [self.user.name, self.user.login, "Custom"]
+        choice = ui.single_select("Choose an author name to attribute the project to", options)
+        if choice == "Custom":
+            return ui.input("Enter a custom author name")
         return choice
 
     def choose_package_name(self):
@@ -246,7 +266,6 @@ class UserData:
         }
         url = f"https://api.github.com/repos/{self.repo.full_name}/branches/master/protection"
         response = requests.put(url, headers=headers, json=data)
-        print(response.json())
 
         if response.status_code == 200:
             return True
@@ -258,15 +277,14 @@ class UserData:
         self.load_user_info()
         if self.prompt_app_install():
             self.repo = self.choose_repo()
-            self.user.email = self.choose_email()
             project = Project(
                 package_name=self.choose_package_name(),
                 distribution_name=self.choose_distribution_name(),
+                author=self.choose_author(),
+                email=self.choose_email()
             )
-            return Data(
-                user=self.user,
-                repo=self.repo,
-                project=project,
+            return PlaceholderData(
+                user=self.user, repo=self.repo, project=project, choices={}
             )
         else:
             return False

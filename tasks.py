@@ -23,8 +23,8 @@ def test(c):
 
 @task
 def docs(c):
-    c.run("sphinx-apidoc -f -o docs {{project.package_name}}")
-    c.run("sphinx-build -b html docs docs/_build")
+    c.run("sphinx-apidoc -f -o docs/source {{project.package_name}}")
+    c.run("sphinx-build -b html docs/source docs/build")
 
 
 @task
@@ -32,8 +32,7 @@ def clean(c):
     paths = [
         "build",
         "dist",
-        "docs/_build",
-        "docs/source",
+        "docs/build",
         "docs/modules.rst",
         "docs/{{project.package_name}}.rst",
         "{{project.package_name}}.egg-info",
