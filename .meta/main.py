@@ -40,6 +40,7 @@ class App:
         replacer.replace()
         finalize.venv()
         finalize.user_notification()
+        finalize.clean()
 
 
 if __name__ == "__main__":

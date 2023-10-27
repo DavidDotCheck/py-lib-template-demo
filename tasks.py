@@ -36,6 +36,7 @@ def clean(c):
         "docs/modules.rst",
         "docs/{{project.package_name}}.rst",
         "{{project.package_name}}.egg-info",
+        ".meta",        
     ]
 
     for path in paths:

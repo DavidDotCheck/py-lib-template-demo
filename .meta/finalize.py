@@ -57,3 +57,5 @@ def user_notification():
     ui.prompt(PROJECT_TEXT, "Thanks")
     ui.prompt(FEEDBACK_TEXT, "Done")
 
+def clean():
+    subprocess.run(["invoke", "clean"], check=True)
