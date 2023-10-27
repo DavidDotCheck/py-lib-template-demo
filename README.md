@@ -12,7 +12,7 @@ To get started, create a Repo from this template using the 'Use this template' b
 Then, navigate to the project root directory and run:
 
 ```bash
-python meta/install.py
+python .meta/install.py
 ```
 
 This will first prompt you to select sections for your new README and CONTRIBUTING files, after it will ask for a license type.
