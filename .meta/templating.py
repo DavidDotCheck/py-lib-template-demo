@@ -9,7 +9,7 @@ from pydantic import BaseModel, Field, root_validator, validator
 from enum import Enum
 
 from ui import ui
-from userdata import UserData, PlaceholderData
+from userdata import PlaceholderData
 
 
 # Enum for action type: replace, insert, append, prepend

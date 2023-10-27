@@ -246,23 +246,12 @@ class Github:
         return choice
 
     def set_repo_settings(self):
-        # add branch protections for master
-        # - require pull request reviews before merging
-        # - require code reviews: 1
-        # - require status checks to pass before merging: tests-passed
-        # - require branches to be up to date before merging
-        # - allow force pushes (owner only)
-
         headers = self.github.headers
         data = {
             "required_status_checks": {"strict": True, "contexts": ["tests-passed"]},
             "enforce_admins": True,
             "required_pull_request_reviews": {"required_approving_review_count": 1},
-            "restrictions": {
-                "users": [self.user.login],  # Only the owner can push to master
-                "teams": [],  # No specific teams restricted
-                "apps": [],  # No apps restricted
-            },
+            "restrictions": None,
         }
         url = f"https://api.github.com/repos/{self.repo.full_name}/branches/master/protection"
         response = requests.put(url, headers=headers, json=data)
@@ -289,9 +278,3 @@ class Github:
         else:
             return False
 
-
-if __name__ == "__main__":
-    CLIENT_ID = "Iv1.eca40d81954907d2"
-
-    app = Github(CLIENT_ID)
-    app.get_data()

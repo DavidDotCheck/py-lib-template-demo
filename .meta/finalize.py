@@ -3,6 +3,7 @@
 import os
 import sys
 import subprocess
+import shutil
 from utils import execute_venv
 from ui import ui
 
@@ -58,4 +59,4 @@ def user_notification():
     ui.prompt(FEEDBACK_TEXT, "Done")
 
 def clean():
-    subprocess.run(["invoke", "clean"], check=True)
+    shutil.rmtree(".meta")
