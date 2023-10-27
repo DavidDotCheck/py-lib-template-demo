@@ -45,9 +45,11 @@ def discover_python(min_version: str = "3.8") -> Dict[str, str]:
         versions[".".join(map(str, current_version[:2]))] = sys.executable
     for path in os.environ["PATH"].split(os.pathsep):
         for python_exe in Path(path).glob("python*"):
+            version = get_version_from_python(str(python_exe))
+
             if (
                 python_exe.is_file()
-                and (version := get_version_from_python(python_exe))
+                and version
                 and compare_versions(version, min_version)
             ):
                 versions[version] = str(python_exe)
@@ -57,11 +59,9 @@ def discover_python(min_version: str = "3.8") -> Dict[str, str]:
         Path("/usr/bin").glob("python*"),
         Path("/usr/local/bin").glob("python*"),
     ):
-        if (
-            python_exe.is_file()
-            and (version := get_version_from_python(python_exe))
-            and compare_versions(version, min_version)
-        ):
+        version = get_version_from_python(str(python_exe))
+
+        if python_exe.is_file() and version and compare_versions(version, min_version):
             versions[version] = python_exe
 
     # Windows
@@ -75,9 +75,10 @@ def discover_python(min_version: str = "3.8") -> Dict[str, str]:
     ):
         if path.is_dir():
             for python_exe in path.glob("python.exe"):
+                version = get_version_from_python(str(python_exe))
                 if (
                     python_exe.is_file()
-                    and (version := get_version_from_python(str(python_exe)))
+                    and version
                     and compare_versions(version, min_version)
                 ):
                     versions[version] = str(python_exe)
