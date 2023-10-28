@@ -16,8 +16,8 @@
         "[![License: {{choices.license.meta.name}}](https://img.shields.io/badge/license-{{choices.license.meta.short_name}}-blue.svg)]({{choices.license.meta.url}})",
         "[![PyPI version](https://badge.fury.io/py/{{project.distribution_name}}.svg)](https://badge.fury.io/py/{{project.distribution_name}})",
         "[![PyPI Supported Versions](https://img.shields.io/pypi/pyversions/{{project.distribution_name}}.svg)](https://pypi.org/project/{{project.distribution_name}})",
-        "[![Tests](https://github.com/{{repo.owner}}/{{repo.name}}/actions/workflows/test-matrix.yml/badge.svg)](https://github.com/{{repo.owner}}/{{repo.name}}/actions/workflows/test-matrix.yml)",
-        "[![Coverage](https://github.com/{{repo.owner}}/{{repo.name}}/actions/workflows/test-coverage.yml/badge.svg)](https://github.com/{{repo.owner}}/{{repo.name}}/actions/workflows/test-coverage.yml)"
+        "[![Tests](https://github.com/{{repo.owner.login}}/{{repo.name}}/actions/workflows/test-matrix.yml/badge.svg)](https://github.com/{{repo.owner.login}}/{{repo.name}}/actions/workflows/test-matrix.yml)",
+        "[![Coverage](https://github.com/{{repo.owner.login}}/{{repo.name}}/actions/workflows/test-coverage.yml/badge.svg)](https://github.com/{{repo.owner.login}}/{{repo.name}}/actions/workflows/test-coverage.yml)"
       ],
       "mandatory": true,
       "type": "array/multiline"
