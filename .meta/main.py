@@ -25,7 +25,7 @@ Please check that you have:
 class App:
     def install(self):
         load_dotenv()
-        generator = FileGenerator("../", "configuration/files")
+        generator = FileGenerator("../", ".meta/configuration/files")
         generator.generate()
         generator.write()
         choices = generator.get_choices()
