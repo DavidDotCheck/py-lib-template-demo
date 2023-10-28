@@ -249,9 +249,14 @@ class Github:
         headers = self.github.headers
         data = {
             "required_status_checks": {"strict": True, "contexts": ["tests-passed"]},
-            "enforce_admins": True,
+            "enforce_admins": False,
             "required_pull_request_reviews": {"required_approving_review_count": 1},
-            "restrictions": None,
+            "restrictions": {
+                "users": [],  # No user restrictions
+                "teams": [],  # No team restrictions
+                "apps": []   # No app restrictions
+            },
+            "allow_force_pushes": True,  # Allow force pushes           
         }
         url = f"https://api.github.com/repos/{self.repo.full_name}/branches/master/protection"
         response = requests.put(url, headers=headers, json=data)

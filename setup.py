@@ -1,14 +1,13 @@
 # setup.py
 # Author: {{project.author}} <{{project.email}}}>
 from setuptools import setup, find_packages
-import setuptools
 
 setup(
     name='{{project.distribution_name}}',
     version='0.1',
     packages=find_packages(),
     install_requires=[
-        setuptools
+        "setuptools"
     ],
     python_requires='>=3.8',
     author='{{project.author}}',
