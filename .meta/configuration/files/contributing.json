@@ -11,9 +11,9 @@
   "options": {
     "base": {
       "content": [
-        "# Contributing to cookiecutter-pylibrary-invoke",
+        "# Contributing to {{project.package_name}}",
         "",
-        "Thank you for your interest in contributing to cookiecutter-pylibrary-invoke! We welcome contributions from everyone. Below are guidelines on how to contribute."
+        "Thank you for your interest in contributing to {{project.package_name}}! We welcome contributions from everyone. Below are guidelines on how to contribute."
       ],
       "mandatory": true,
       "type": "array/multiline"
