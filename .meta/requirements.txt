@@ -1,6 +1,0 @@
-pydantic==1.10.7
-prompt_toolkit
-python-dotenv
-requests
-importlib-metadata
-pyperclip

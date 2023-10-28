@@ -1,9 +1,9 @@
-.. {{repo.name}} documentation master file, created by
-   py-lib-template on {{date.formatted}}.
+.. py-lib-template-demo documentation master file, created by
+   py-lib-template on 2023-10-28.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to {{repo.name}}'s documentation!
+Welcome to py-lib-template-demo's documentation!
 ====================================================
 
 .. toctree::
